@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Candle & Co — Request a Call</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <style>
+    :root{
+      --cream:#FFF6EE; --peach:#FFDAB9; --brown:#8B5E3C; --muted:#666;
+      font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+    }
+    body{background:var(--cream); color:var(--brown); margin:0; padding:20px; display:flex; align-items:center; justify-content:center; min-height:100vh;}
+    .card{background:white; border-radius:12px; box-shadow:0 8px 20px rgba(0,0,0,.08); padding:28px; width:100%; max-width:520px;}
+    h1{margin:0 0 8px; font-family: "Playfair Display", serif; font-size:24px;}
+    p{margin:0 0 18px; color:var(--muted);}
+    label{display:block; margin-bottom:10px;}
+    input[type="text"], input[type="tel"]{width:100%; padding:10px; border:1px solid #eee; border-radius:8px; box-sizing:border-box;}
+    .row{display:flex; gap:8px;}
+    .btn{background:var(--brown); color:white; border:none; padding:10px 14px; border-radius:8px; cursor:pointer;}
+    .note{font-size:13px; color:#777; margin-top:12px;}
+    .success{color:green; margin-top:12px;}
+    .error{color:red; margin-top:12px;}
+    .small{font-size:14px; color:#555;}
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>Candle & Co</h1>
+    <p class="small">Handcrafted scented candles — Request a quick call and we'll help you pick the perfect festive set.</p>
+
+    <form id="leadForm">
+      <label>
+        Name (optional)
+        <input id="name" type="text" placeholder="Your name" />
+      </label>
+
+      <label>
+        Phone (India)
+        <input id="phone" type="tel" placeholder="+91XXXXXXXXXX" required />
+      </label>
+
+      <label style="display:flex;align-items:center; gap:8px;">
+        <input id="consent" type="checkbox" required />
+        <span class="small">I consent to receive a call from Candle & Co.</span>
+      </label>
+
+      <div style="margin-top:12px;">
+        <button type="submit" class="btn">Request Call</button>
+      </div>
+
+      <div id="message"></div>
+      <div class="note">By requesting a call you agree to be contacted for this enquiry only.</div>
+    </form>
+
+    <hr style="margin:18px 0" />
+    <div style="font-size:13px; color:#666;">
+      <strong>Demo notes:</strong>
+      <div>We will call the number using your VAPI setup. For local testing, run backend and use ngrok to expose the webhook.</div>
+    </div>
+  </div>
+
+  <script>
+    const form = document.getElementById('leadForm');
+    const message = document.getElementById('message');
+
+    form.addEventListener('submit', async e => {
+      e.preventDefault();
+      message.textContent = ''; message.className = '';
+      const name = document.getElementById('name').value.trim();
+      const phone = document.getElementById('phone').value.trim();
+      const consent = document.getElementById('consent').checked;
+
+      if (!consent) { message.textContent='Consent is required'; message.className='error'; return; }
+      if (!phone) { message.textContent='Phone is required'; message.className='error'; return; }
+
+      try {
+        const res = await fetch('/enquire', {
+          method: 'POST',
+          headers: {'Content-Type':'application/json'},
+          body: JSON.stringify({ name, phone, consent })
+        });
+        const j = await res.json();
+        if (res.ok) {
+          message.textContent = j.message || 'Call requested — you should receive a call shortly.';
+          message.className = 'success';
+          form.reset();
+        } else {
+          message.textContent = j.message || 'Error requesting call';
+          message.className = 'error';
+        }
+      } catch (err) {
+        message.textContent = 'Network error';
+        message.className = 'error';
+      }
+    });
+  </script>
+</body>
+</html>
+
