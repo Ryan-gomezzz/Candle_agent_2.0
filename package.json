@@ -1,0 +1,13 @@
+{
+  "name": "candle-sales-agent-demo",
+  "version": "1.0.0",
+  "description": "Candle Sales Agent Demo - VAPI integration for AI-powered outbound calls",
+  "scripts": {
+    "start": "cd server && node index.js",
+    "dev": "cd server && nodemon index.js"
+  },
+  "engines": {
+    "node": ">=18.x"
+  }
+}
+

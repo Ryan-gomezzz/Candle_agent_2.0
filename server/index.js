@@ -112,5 +112,11 @@ app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, '..', 'frontend', 'index.html'));
 });
 
-app.listen(PORT, () => console.log(`Server running on ${PORT}`));
+// Export for Vercel serverless functions
+module.exports = app;
+
+// Only listen when running locally (not on Vercel)
+if (require.main === module) {
+  app.listen(PORT, () => console.log(`Server running on ${PORT}`));
+}
 

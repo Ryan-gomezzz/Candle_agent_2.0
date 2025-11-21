@@ -21,6 +21,7 @@ CandleSalesAgent-Demo/
 │  ├─ index.js
 │  ├─ package.json
 │  └─ .env.example
+├─ vercel.json
 └─ README.md
 ```
 
@@ -69,6 +70,35 @@ ngrok http 3000
 Copy the HTTPS URL (e.g., `https://abc123.ngrok.io`) and update `WEBHOOK_PUBLIC_BASE` in your `.env` file, then restart the server.
 
 ## Deployment
+
+### Vercel (Recommended)
+
+1. Install Vercel CLI (optional, for local testing):
+   ```bash
+   npm i -g vercel
+   ```
+
+2. Deploy via Vercel Dashboard:
+   - Push your code to GitHub
+   - Go to [vercel.com](https://vercel.com) and sign in
+   - Click "New Project" and import your GitHub repository
+   - Set the following environment variables in Vercel dashboard:
+     - `VAPI_API_URL`
+     - `VAPI_API_KEY`
+     - `CALLER_ID` (optional)
+     - `WEBHOOK_PUBLIC_BASE` (will be your Vercel domain, e.g., `https://your-project.vercel.app`)
+   - Click "Deploy"
+   - After deployment, update `WEBHOOK_PUBLIC_BASE` with your actual Vercel URL
+
+3. Or deploy via CLI:
+   ```bash
+   vercel
+   ```
+   Follow the prompts and add environment variables when asked.
+
+4. Configure your VAPI dashboard to use the production webhook URL: `https://your-project.vercel.app/webhook`
+
+**Note:** The `leads` in-memory store will reset on each serverless function invocation. For production, consider using a database (Vercel Postgres, MongoDB, etc.).
 
 ### Render / Railway / Heroku
 
